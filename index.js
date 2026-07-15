@@ -1,11 +1,10 @@
-app.put('/biodata/:id', async (req, res) => {
+app.delete('/biodata/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { nama, nim, kelas } = req.body;
 
         const result = await pool.query(
-            'UPDATE biodata SET nama = $1, nim = $2, kelas = $3 WHERE id = $4 RETURNING *',
-            [nama, nim, kelas, id]
+            'DELETE FROM biodata WHERE id = $1 RETURNING *',
+            [id]
         );
 
         if (result.rows.length === 0) {
@@ -13,7 +12,7 @@ app.put('/biodata/:id', async (req, res) => {
         }
 
         res.status(200).json({
-            message: "Berhasil mengupdate data biodata",
+            message: "Berhasil menghapus data biodata",
             data: result.rows[0]
         });
     } catch (err) {
