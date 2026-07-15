@@ -1,14 +1,19 @@
-app.post('/biodata', async (req, res) => {
+app.put('/biodata/:id', async (req, res) => {
     try {
-        const { id, nama, nim, kelas } = req.body;
+        const { id } = req.params;
+        const { nama, nim, kelas } = req.body;
 
         const result = await pool.query(
-            'INSERT INTO biodata (id, nama, nim, kelas) VALUES ($1, $2, $3, $4) RETURNING *',
-            [id, nama, nim, kelas]
+            'UPDATE biodata SET nama = $1, nim = $2, kelas = $3 WHERE id = $4 RETURNING *',
+            [nama, nim, kelas, id]
         );
 
-        res.status(201).json({
-            message: "Berhasil menambahkan data biodata",
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "Data dengan id tersebut tidak ditemukan" });
+        }
+
+        res.status(200).json({
+            message: "Berhasil mengupdate data biodata",
             data: result.rows[0]
         });
     } catch (err) {
