@@ -1,9 +1,15 @@
-app.get('/biodata', async (req, res) => {
+app.post('/biodata', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM biodata');
-        res.status(200).json({
-            message: "Berhasil mengambil data biodata",
-            data: result.rows
+        const { id, nama, nim, kelas } = req.body;
+
+        const result = await pool.query(
+            'INSERT INTO biodata (id, nama, nim, kelas) VALUES ($1, $2, $3, $4) RETURNING *',
+            [id, nama, nim, kelas]
+        );
+
+        res.status(201).json({
+            message: "Berhasil menambahkan data biodata",
+            data: result.rows[0]
         });
     } catch (err) {
         console.error(err.message);
