@@ -1,23 +1,12 @@
-const express = require('express');
-const { Pool } = require('pg');
-
-const app = express();
-const port = 3000;
-
-// Konfigurasi Connection Pool ke PostgreSQL
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'mahasiswa',
-    password: '123',
-    port: 5432,
-});
-
-app.use(express.json());
-
-
-
-// Menjalankan Server Express
-app.listen(port, () => {
-    console.log('Server berjalan di http://localhost:3000');
+app.get('/biodata', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM biodata');
+        res.status(200).json({
+            message: "Berhasil mengambil data biodata",
+            data: result.rows
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Terjadi kesalahan pada server atau database" });
+    }
 });
